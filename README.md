@@ -36,19 +36,51 @@ Result: total active customers is `20,100`
 
 **Step 1: Count the refunds**
 ```SQL
-select count(*) from refunds
+select count(*) as refunds from refunds
 where refund_ts >= '2026-09-01 00:00:00' and refund_ts < '2026-10-01 00:00:00';
 ```
 Result: 221 refunds (while August had 89)
 
 **Step 2: Look for duplicates**
 - An order is normally refunded once, at most. **How many orders have more than one refund logged in September 2026?**
+- Pre-queries show source_system has 2765 in legacy and 186 in new.
 
 ```SQL
-
+select count(*) as refunded_twice
+from (
+  
+  select order_id from refunds
+  where refund_ts >= '2026-09-01 00:00:00' and refund_ts < '2026-10-01 00:00:00'
+  group by order_id
+  having count(*) > 1
+  
+  );
 ```
+Result: refunded_twice is 55.
 
+**Step 3: Find the real culprit**
+- 55 orders logged twice. It's now disclosed refunds moved to new system in September and for two weeks the system logged both.
+- Now the real question. With each refund counted once, which product is costing us the most in refund dollars in September? Dollars, not the number of refunds. Just send the product.
 
+```SQL
+with sept_refunds as (
+  select distinct order_id, amount from refunds
+  where refund_ts >= '2026-09-01 00:00:00' and refund_ts < '2026-10-01 00:00:00'
+)
+
+select p.product_name, sum(r.amount) as refund_dollars
+  
+from sept_refunds as r
+join order_items as oi on oi.order_id = r.order_id
+join products as p on p.product_id = oi.product_id
+group by p.product_name
+order by refund_dollars DESC
+limit 1;
+```
+Result: the product 'Drip-Free Glass Honey Dispenser is the product costing the most in refund dollars with $3,196.00 refunded.
+Consensus: EDA during part two already identified that the legacy system may be the reason for the duplicate refunds logged.
+
+### Day 4
 
 
 
