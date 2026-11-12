@@ -31,4 +31,24 @@ where c.is_test_account = false
 Result: total active customers is `20,100`
 - The query removes test accounts located in customers table, is customers between Oct. 1 2025 and Sept. 30, 2026, and are customers with orders that are at least completed or refunded.
 
-### Day 3: 
+### Day 3: Refunds Inquiry by Finance
+- **Refunds spiked** - it was flagged that refunds spiked in September 2026 and they want to know which product is behind it before the finance review. Before blaming a product, check the data.
+
+**Step 1: Count the refunds**
+```SQL
+select count(*) from refunds
+where refund_ts >= '2026-09-01 00:00:00' and refund_ts < '2026-10-01 00:00:00';
+```
+Result: 221 refunds (while August had 89)
+
+**Step 2: Look for duplicates**
+- An order is normally refunded once, at most. **How many orders have more than one refund logged in September 2026?**
+
+```SQL
+
+```
+
+
+
+
+
