@@ -11,9 +11,9 @@ GoldComb Goods database includes customers, products, orders, order_items, refun
 
 ```SQL
 select count(*) as customers
-from customers
+from customers;
 ```
-Result: total "lifetime" customers is `49,478`
+Result: total "lifetime" customers is `49,478` (*not omitting test accounts circa 200-300)
 
 ### Day 2: Active Customers clarification
 - The simulation prompted it meant active customers. Active customer is defined as: (1) customers in customers table that are not test accounts, (2) are between a certain timeframe, and (3) have at least one order that's not cancelled.
@@ -80,7 +80,26 @@ limit 1;
 Result: the product 'Drip-Free Glass Honey Dispenser is the product costing the most in refund dollars with $3,196.00 refunded.
 Consensus: EDA during part two already identified that the legacy system may be the reason for the duplicate refunds logged.
 
-### Day 4
+### Day 4: Sales and Finance can't agree on a number
+For September 2026, Marcus says revenue was about $299.5k. Priya says about $258.7k. Both swear their number is right, and the leadership meeting is Monday.
+- Responded with '**How exactly does each one of you calculate revenue?**' Both defined in the metrics_glossary: Gross Sales is Marcus's, and Net Revenue is Priya's.
+- One thing that trips people up: 'order_ts' is stored in UTC but Sales reports in US Eastern Time, which is UTC-4 in September.
+
+| metric_name | definition |
+| ----------- | ----------- |
+| Gross Sales | Sum of quantity * unit_price from order_items for every order placed in the period, any status. Periods are cut in US Eastern time (UTC-4 in September; order_ts is stored in UTC). Used for sales targets and commission.	 |
+| Net Revenue | Sum of quantity * unit_price from order_items for orders placed in the period that were not cancelled, minus refunds issued in the period (each refund counted once). Periods are cut in UTC. This is the number reported to the board.	 |
+
+**Step 1: Marcus's Number**
+
+
+
+**Step 2: Priya's Sales'**
+
+
+
+
+
 
 
 
