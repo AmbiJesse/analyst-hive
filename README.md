@@ -143,3 +143,5 @@ from sales, refunded;
 Result: net_revenue is 258721.00 or $258.7k
 
 `Rebuilt both numbers from the raw data. Marcus ($299,482) and Priya ($258,721) are both right. They're $40,761 apart because they measure different things. `
+
+### Day 5: The Leadership Summary
