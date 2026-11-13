@@ -119,13 +119,27 @@ Result: incomplete query puts revenue at 266789.00 or $266.8k.
 **Step 3: Subtract the refunds**
 - Last step: subtract September's refunds, each counted once (remember Wednesday). That should land on Priya's number.
 ```SQL
-select sum(quantity * unit_price) as net_revenue
-  
-from order_items as oi
-join orders as o on o.order_id = oi.order_id
-  
-where o.order_ts >= '2026-09-01 00:00:00' and o.order_ts < '2026-10-01 00:00:00'
-and o.status in ('completed', 'refunded')
+with sales as (
+  select sum(quantity * unit_price) as sales
+  from orders as o
+  join order_items as oi on o.order_id = oi.order_id
+
+  where o.status <> 'cancelled'
+  and o.order_ts >= '2026-09-01 00:00:00' and o.order_ts < '2026-10-01 00:00:00'
+),
+
+refunded as (
+  select sum(amount) as refunds
+  from (
+  select distinct order_id, amount
+  from refunds
+  where refund_ts >= '2026-09-01 00:00:00' and refund_ts < '2026-10-01 00:00:00'
+  )
+)
+
+select sales - refunds as net_revenue
+from sales, refunded;
 ```
+Result: net_revenue is 258721.00 or $258.7k
 
-
+`Rebuilt both numbers from the raw data. Marcus ($299,482) and Priya ($258,721) are both right. They're $40,761 apart because they measure different things. `
