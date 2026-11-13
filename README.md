@@ -145,3 +145,23 @@ Result: net_revenue is 258721.00 or $258.7k
 `Rebuilt both numbers from the raw data. Marcus ($299,482) and Priya ($258,721) are both right. They're $40,761 apart because they measure different things. `
 
 ### Day 5: The Leadership Summary
+- Marcus wants a short update for Monday's leadership meeting, and he wants a trend: **Net Revenue by month, June to September 2026**, using Priya's definition (it's the number that goes to the boards).
+ - Just the three things leadership needs to know.
+
+**Step 1: Sales by month**
+- Sales for each month, June to Sept. 2026, Priya's way: UTC months, no cancelled orders. One row per month, June first.
+```SQL
+
+```
+
+
+**Step 2: Refunds by month**
+
+```SQL
+
+```
+**Step 3: Net Revenue by month**
+
+```SQL
+
+```
