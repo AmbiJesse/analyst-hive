@@ -91,15 +91,41 @@ For September 2026, Marcus says revenue was about $299.5k. Priya says about $258
 | Net Revenue | Sum of quantity * unit_price from order_items for orders placed in the period that were not cancelled, minus refunds issued in the period (each refund counted once). Periods are cut in UTC. This is the number reported to the board.	 |
 
 **Step 1: Marcus's Number**
+- Rebuild Gross Sales for Sept 2026 his team's way: every order placed, any status, with the month cut in Eastern time.
+```SQL
+select sum(quantity * unit_price) as gross_sales
 
+from order_items as oi
+join orders as o on o.order_id = oi.order_id
 
+where o.order_ts >= '2026-09-01 04:00:00' and o.order_ts < '2026-10-01 04:00:00';
+```
+Result: gross_sales is 299482.00 or $299.5k
 
-**Step 2: Priya's Sales'**
+**Step 2: Priya's Sales**
+- Rebuild Priya's side, starting with sales: Sept 2026 sales, leaving out cancelled orders, with the month cut in UTC (no time shift). Don't subtract refunds yet.
+- At this step, simply: change back to normal UTC months, omit cancelled orders, postpone refunds.
+```SQL
+select sum(quantity * unit_price) as net_revenue
+  
+from order_items as oi
+join orders as o on o.order_id = oi.order_id
+  
+where o.order_ts >= '2026-09-01 00:00:00' and o.order_ts < '2026-10-01 00:00:00'
+and o.status in ('completed', 'refunded')
+```
+Result: incomplete query puts revenue at 266789.00 or $266.8k.
 
-
-
-
-
-
+**Step 3: Subtract the refunds**
+- Last step: subtract September's refunds, each counted once (remember Wednesday). That should land on Priya's number.
+```SQL
+select sum(quantity * unit_price) as net_revenue
+  
+from order_items as oi
+join orders as o on o.order_id = oi.order_id
+  
+where o.order_ts >= '2026-09-01 00:00:00' and o.order_ts < '2026-10-01 00:00:00'
+and o.status in ('completed', 'refunded')
+```
 
 
