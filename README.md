@@ -178,6 +178,7 @@ group by month
 order by month;
 ```
 Result: 4 rows for June-Sept, refund amounts for each month.
+
 **Step 3: Net Revenue by month**
 - Put them together: Net Revenue for each month = sales minus refunds, June first. Extra credit (not graded): add the month-over-month change with LAG.
 
