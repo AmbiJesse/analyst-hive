@@ -167,8 +167,17 @@ Result: 4 rows for June-Sept, calculated Priya's way and matches the earlier cal
 **Step 2: Refunds by month**
 - Refunds for each month, June-Sept 2026, each refund counted once. One row per month.
 ```SQL
-
+select month, sum(amount) as refunds
+from (
+  select distinct order_id, amount,
+    date_trunc('month', refund_ts) as month
+  from refunds
+)
+where month >= '2026-06-01 00:00:00' and month < '2026-10-01 00:00:00'
+group by month
+order by month;
 ```
+Result: 4 rows for June-Sept, refund amounts for each month.
 **Step 3: Net Revenue by month**
 
 ```SQL
