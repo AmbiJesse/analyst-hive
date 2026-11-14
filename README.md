@@ -151,12 +151,21 @@ Result: net_revenue is 258721.00 or $258.7k
 **Step 1: Sales by month**
 - Sales for each month, June to Sept. 2026, Priya's way: UTC months, no cancelled orders. One row per month, June first.
 ```SQL
+select
+  date_trunc('month', o.order_ts) as month,
+  sum(quantity * unit_price) as net_revenue,
+from order_items as oi
+join orders as o on o.order_id = oi.order_id
 
+where o.order_ts >= '2026-06-01 00:00:00' and o.order_ts < '2026-10-01 00:00:00'
+and o.status in ('completed', 'refunded')
+group by month
+order by month;
 ```
-
+Result: 4 rows for June-Sept, calculated Priya's way and matches the earlier calculation.
 
 **Step 2: Refunds by month**
-
+- Refunds for each month, June-Sept 2026, each refund counted once. One row per month.
 ```SQL
 
 ```
