@@ -180,8 +180,50 @@ order by month;
 Result: 4 rows for June-Sept, refund amounts for each month.
 
 **Step 3: Net Revenue by month**
-- Put them together: Net Revenue for each month = sales minus refunds, June first. Extra credit (not graded): add the month-over-month change with LAG.
+- Put them together: Net Revenue for each month = sales minus refunds, June first.
 
 ```SQL
+with sales as (
+  select
+    date_trunc('month', o.order_ts) as month,
+    sum(quantity * unit_price) as sales
+  from order_items as oi
+  join orders as o on o.order_id = oi.order_id
+  where o.order_ts >= '2026-06-01 00:00:00' and o.order_ts < '2026-10-01 00:00:00'
+  and o.status in ('completed', 'refunded')
+  group by month
+  order by month
+),
+refunded as (
+  select month, sum(amount) as refunds
+  from (
+    select distinct order_id, amount,
+      date_trunc('month', refund_ts) as month
+    from refunds
+  )
+  where month >= '2026-06-01 00:00:00' and month < '2026-10-01 00:00:00'
+  group by month
+  order by month
+)
 
+select
+  s.month as month,
+  s.sales,
+  r.refunds,
+  s.sales - r.refunds as net_revenue
+from sales as s
+left join refunded as r on r.month = s.month;
 ```
+Final result:
+
+| month | sales | refunds | net_revenue |
+| --  | -- | -- | -- |
+| 2026-06-01 | 235220.00 | 3245.00 | 231975.00 |
+| 2026-07-01 | 238112.00 | 4303.00 | 233809.00 |
+| 2026-08-01 | 248893.00 | 4404.00 | 244489.00 |
+| 2026-09-01 | 266789.00 | 8068.00 | 258721.00 |
+
+### Review
+1. We have 20,100 active customers, not 49,478. The bigger number counted everyone who ever signed up, including our own test accounts.
+2. The September refund "spike" was half double-logging from the refund system migration. The real problem is the Drip-Free Glass Honey Dispenser's leaking lid, and Ops has pulled the faulty batch.
+3. September Net Revenue was $258,721, up 5.8% on August. Sales' $299,482 isn't wrong, it measures something different: Eastern time, cancelled orders included, refunds not subtracted.
