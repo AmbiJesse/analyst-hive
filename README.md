@@ -223,7 +223,8 @@ Final result:
 | 2026-08-01 | 248893.00 | 4404.00 | 244489.00 |
 | 2026-09-01 | 266789.00 | 8068.00 | 258721.00 |
 
-### Review
+### Findings
 1. We have 20,100 active customers, not 49,478. The bigger number counted everyone who ever signed up, including our own test accounts.
 2. The September refund "spike" was half double-logging from the refund system migration. The real problem is the Drip-Free Glass Honey Dispenser's leaking lid, and Ops has pulled the faulty batch.
 3. September Net Revenue was $258,721, up 5.8% on August. Sales' $299,482 isn't wrong, it measures something different: Eastern time, cancelled orders included, refunds not subtracted.
+
